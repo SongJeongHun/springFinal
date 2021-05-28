@@ -60,14 +60,14 @@
         <%
         } else {
         %>
-        <form method="post" action="./loginAction.jsp">
+        <form method="post" action="./loginAction">
             <div class="form-group">
                 <label>아이디</label>
                 <input type="text" name="userID" class="form-control">
             </div>
             <div class="form-group">
                 <label>비밀번호</label>
-                <input type="password" name="userPassword" class="form-control">
+                <input type="password" name="userPwd" class="form-control">
             </div>
             <button type="submit" class="btn btn-primary">로그인</button>
             <a class="btn btn-primary" href="./userJoin">가입</a>

@@ -6,8 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class userDAO {
-    public int login(String userID,String userPassword){
-        String SQL="SELECT userPassword FROM evaluation_user WHERE userID=?";//사용자로부터 입력받은 아이디의 패스워드를 불러와서 ㄷ다룸
+    public userDAO(){}
+    public int login(String userID,String userPwd){
+        String SQL="SELECT userPwd FROM user WHERE userID=?";//사용자로부터 입력받은 아이디의 패스워드를 불러와서 ㄷ다룸
         Connection conn=null;
         PreparedStatement pstmt=null;
         ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
@@ -17,7 +18,7 @@ public class userDAO {
             pstmt.setString(1,userID);  //입력받은 ID값을 ?안에 넣어줌 1번째 물음표
             rs=pstmt.executeQuery();    //데이터를 조회할때 사용 에시쿼트 쿼리
             if(rs.next()){  //rs값이 존재하면
-                if(rs.getString(1).equals(userPassword))  //비밀번호가 일치하면
+                if(rs.getString(1).equals(userPwd))  //비밀번호가 일치하면
                     return 1;//로그인 성공
                 else
                     return  0; //비밀번호 틀림
@@ -34,7 +35,7 @@ public class userDAO {
         return -2; //데이터베이스 오류
     }
     public int join(String userID,String userPassword,String userName,String userPhoneNum,String userAdd){
-        String SQL="INSERT INTO user VALUES (?,?,?,?,?,?)";
+        String SQL="INSERT INTO user VALUES (?,?,?,?,?)";
         Connection conn=null;
         PreparedStatement pstmt=null;
         ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
@@ -47,7 +48,6 @@ public class userDAO {
             pstmt.setString(4,userPhoneNum);
             pstmt.setString(5,userAdd);
             return pstmt.executeUpdate();   //데이터 계수를 반환.성공시 1반환
-
         }catch (Exception e) {
             e.printStackTrace();
         }finally {
@@ -59,10 +59,10 @@ public class userDAO {
     }
     public Connection getConnection(){
         try{
-            String dbURL="jdbc:mysql://localhost/BookManagementSystem";
+            String dbURL="jdbc:mysql://localhost:3306/BookManagementSystem?serverTimezone=UTC";
             String dbID="root";
             String dbPassword="qwer1234";
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             //그냥jdbc에 드라이버는 이제 안씀
             return DriverManager.getConnection(dbURL,dbID,dbPassword);//3306 포트에 튜토리얼 에서 위에 적힌 아이디와
             // 페스워드로 로그인한 상태를 반환

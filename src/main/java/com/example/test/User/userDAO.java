@@ -51,7 +51,6 @@ public class userDAO {
                     String name = rs.getString("userName");
                     String phoneNum = rs.getString("userPhoneNum");
                     String address = rs.getString("userAdd");
-                    System.out.println(id + name + phoneNum + address);
                     user =  new userDTO(id, "", name, phoneNum, address);
                 }
             }

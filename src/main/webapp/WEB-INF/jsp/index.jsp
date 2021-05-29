@@ -104,11 +104,12 @@
                     if (booksList != null) {
                         for (int i = 0; i < booksList.size(); i++) {
                 %>
-                <a class="form-control mt-2 text-left">
-                    <b style>&nbsp;제목: <%=booksList.get(i).getTitle()%> </b>
-                    <small>&nbsp;작가: <%=booksList.get(i).getAuthor()%> </small>
-                    <small>&nbsp;출판사: <%=booksList.get(i).getPublisher()%> </small>
-                    <small>&nbsp;출판일: <%=booksList.get(i).getPubDate()%> </small>
+                <a href = "LendingAction?bookID=<%=booksList.get(i).getID()%>" class="form-control mt-2 text-left">
+                    <small>(<%=booksList.get(i).getID()%>)&nbsp;</small>
+                    <b style>&nbsp; <%=booksList.get(i).getTitle()%> </b>
+                    <small>&nbsp; <%=booksList.get(i).getAuthor()%> </small>
+                    <small>&nbsp;&nbsp;출판사: <%=booksList.get(i).getPublisher()%> </small>
+                    <small>&nbsp;&nbsp;출판일: <%=booksList.get(i).getPubDate()%> </small>
                     <%
                         if (booksList.get(i).getUsable()) {
                     %>

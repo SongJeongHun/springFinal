@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="userDAO.jsp" %>
 <%@ page import="java.io.PrintWriter" %>
 <%
     request.setCharacterEncoding("UTF-8");

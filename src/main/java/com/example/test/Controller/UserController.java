@@ -100,4 +100,9 @@ public class UserController {
         }
         return mav;
     }
+    @RequestMapping("/userLogout")
+    public ModelAndView userLogout(ModelAndView mav){
+        mav.setViewName("userLogout");
+        return mav;
+    }
 }

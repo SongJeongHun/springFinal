@@ -1,5 +1,8 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.net.InetAddress" %>
+<%@ page import="com.example.test.Book.BookDAO" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.example.test.Book.BookDTO" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="utf-8"%>
 <%
     InetAddress Address = InetAddress.getLocalHost();
@@ -49,11 +52,10 @@
             <button class="btn" id="dropdownButton" type="button" data-toggle="dropdown"
                     aria-expanded="false"><span style="color:#808080;"> <%=userID%>님! 안녕하세요</span>
             </button>
-            <form method="get" action="index.jsp">
+            <form method="get" action="/">
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownButton">
-                    <button class="dropdown-item" name="search" value="<%=userID%>">내가 쓴 글 보기</button>
                     <div class="dropdown-item"><%=ip%></div>
-                    <a class="dropdown-item" href="userLogout.jsp">로그아웃</a>
+                    <a class="dropdown-item" href="userLogout">로그아웃</a>
                 </ul>
             </form>
         </div>
@@ -78,7 +80,7 @@
     </section>
     <%--컨테이너 2--%>
     <section class="container col-10 pr-5">
-        <form method="get" action="index.jsp" class="form-inline mt-3">
+        <form method="get" action="/" class="form-inline mt-3">
             <select name="searchType" class="form-control mx-1 mt-2">
                 <option value="title" <%if (searchType.equals("title")) out.println("selected");%>>title</option>
                 <option value="author" <%if (searchType.equals("author")) out.println("selected");%>>author</option>
@@ -87,9 +89,8 @@
             <button type="submit" class="btn btn-primary mx-1 mt-2">검색</button>
         </form>
         <%
-            ResultSet evaluationList = null;
-//            evaluationList = test(searchType);
-
+            BookDAO bookDAO = new BookDAO();
+            ArrayList<BookDTO> booksList = bookDAO.getBooks();
         %>
         <div class="card bg-light mt-3">
             <div class="card-header">
@@ -98,9 +99,26 @@
             <div class="card-body">
                 <label>제목</label>
                 <%
-                    if (evaluationList != null) {
-                        while (evaluationList.next()) {
+                    if (booksList != null) {
+                        for(int i = 0; i < booksList.size(); i ++){
                 %>
+                <a class="form-control mt-2 text-left">
+                <b style>&nbsp;제목:(<%=booksList.get(i).getTitle()%>)</b>
+                <small>&nbsp;작가:(<%=booksList.get(i).getAuthor()%>)</small>
+                <small>&nbsp;출판사:(<%=booksList.get(i).getPublisher()%>)</small>
+                <small>&nbsp;출판일:(<%=booksList.get(i).getPubDate()%>)</small>
+                    <%
+                        if(booksList.get(i).getUsable()){
+                    %>
+                    <small style="color:blue;">대여가능</small>
+                    <%
+                        }else{
+                    %>
+                    <small style="color:red;">대여불가</small>
+                    <%
+                        }
+                    %>
+                </a>
                 <%
                         }
                     }
@@ -119,39 +137,3 @@
 </html>
 </body>
 </html>
-<%!
-    public Connection getConnection1(){
-        try{
-            String dbURL="jdbc:mysql://localhost/songjeh1039";
-            String dbID="songjeh1039";
-            String dbPassword="KSsongjeh1039M";
-            Class.forName("com.mysql.jdbc.Driver");
-            //그냥jdbc에 드라이버는 이제 안씀
-            return DriverManager.getConnection(dbURL,dbID,dbPassword);//3306 포트에 튜토리얼 에서 위에 적힌 아이디와
-            // 페스워드로 로그인한 상태를 반환
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-    public ResultSet test(String searchType) throws SQLException {
-
-        ResultSet rs=null;
-        String SQL="SELECT * FROM evaluation_evaluation WHERE lectureDivide LIKE ? AND CONCAT(lectureName,professorName,evaluationTitle,evaluationContent,userID) LIKE ? ORDER BY evaluationID";
-        if (searchType.equals("new")) {
-           SQL = "SELECT * FROM evaluation_evaluation WHERE lectureDivide LIKE ? AND CONCAT(lectureName,professorName,evaluationTitle,evaluationContent,userID) LIKE ? ORDER BY evaluationID";
-        } else if (searchType.equals("like")) {
-            SQL = "SELECT * FROM evaluation_evaluation WHERE lectureDivide LIKE ? AND CONCAT(lectureName,professorName,evaluationTitle,evaluationContent,userID) LIKE ? ORDER BY likeCount";
-        }
-        PreparedStatement pstmt = null;
-        Connection conn = null;
-        conn = getConnection1();
-        pstmt = conn.prepareStatement(SQL);
-        pstmt.setString(1, "%" + "" + "%");
-        pstmt.setString(2, "%" + "" + "%");
-        rs = pstmt.executeQuery();
-
-        return rs;
-    }
-
-%>

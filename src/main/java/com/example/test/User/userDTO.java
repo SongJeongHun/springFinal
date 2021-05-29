@@ -7,6 +7,14 @@ public class userDTO {
     String userPhoneNum;
     String userAdd;
 
+    public userDTO(String userID, String userPwd, String userName, String userPhoneNum, String userAdd) {
+        this.userID = userID;
+        this.userPwd = userPwd;
+        this.userName = userName;
+        this.userPhoneNum = userPhoneNum;
+        this.userAdd = userAdd;
+    }
+
     public String getUserID() {
         return userID;
     }

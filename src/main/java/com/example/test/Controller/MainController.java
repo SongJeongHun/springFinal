@@ -24,4 +24,14 @@ public class MainController {
         mav.setViewName("userJoin");
         return mav;
     }
+    @RequestMapping("/MyPage")
+    public ModelAndView myPage(ModelAndView mav){
+        mav.setViewName("MyPage");
+        return mav;
+    }
+//    @RequestMapping("/")
+//    public ModelAndView test(ModelAndView mav){
+//        mav.setViewName("test");
+//        return mav;
+//    }
 }

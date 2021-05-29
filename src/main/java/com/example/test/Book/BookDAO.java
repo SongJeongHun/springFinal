@@ -50,7 +50,7 @@ public class BookDAO {
             Class.forName("com.mysql.cj.jdbc.Driver");
             //그냥jdbc에 드라이버는 이제 안씀
             return DriverManager.getConnection(dbURL,dbID,dbPassword);//3306 포트에 튜토리얼 에서 위에 적힌 아이디와
-            // 페스워드로 로그인한 상태를 반환
+            // 페스워드로 로그인한 상태를 반환e
         }catch(Exception e){
             e.printStackTrace();
         }

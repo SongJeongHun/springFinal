@@ -3,10 +3,10 @@
 <%@ page import="com.example.test.Book.BookDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.example.test.Book.BookDTO" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <%
     InetAddress Address = InetAddress.getLocalHost();
-    String ip=Address.getHostAddress();
+    String ip = Address.getHostAddress();
     request.setCharacterEncoding("UTF-8");
     String lectureDivide = "";
     String searchType = "";
@@ -54,8 +54,10 @@
             </button>
             <form method="get" action="/">
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownButton">
-                    <div class="dropdown-item"><%=ip%></div>
+                    <div class="dropdown-item"><%=ip%>
+                    </div>
                     <a class="dropdown-item" href="userLogout">로그아웃</a>
+                    <a class="dropdown-item" href="MyPage">마이페이지</a>
                 </ul>
             </form>
         </div>
@@ -100,19 +102,19 @@
                 <label>제목</label>
                 <%
                     if (booksList != null) {
-                        for(int i = 0; i < booksList.size(); i ++){
+                        for (int i = 0; i < booksList.size(); i++) {
                 %>
                 <a class="form-control mt-2 text-left">
-                <b style>&nbsp;제목:(<%=booksList.get(i).getTitle()%>)</b>
-                <small>&nbsp;작가:(<%=booksList.get(i).getAuthor()%>)</small>
-                <small>&nbsp;출판사:(<%=booksList.get(i).getPublisher()%>)</small>
-                <small>&nbsp;출판일:(<%=booksList.get(i).getPubDate()%>)</small>
+                    <b style>&nbsp;제목: <%=booksList.get(i).getTitle()%> </b>
+                    <small>&nbsp;작가: <%=booksList.get(i).getAuthor()%> </small>
+                    <small>&nbsp;출판사: <%=booksList.get(i).getPublisher()%> </small>
+                    <small>&nbsp;출판일: <%=booksList.get(i).getPubDate()%> </small>
                     <%
-                        if(booksList.get(i).getUsable()){
+                        if (booksList.get(i).getUsable()) {
                     %>
                     <small style="color:blue;">대여가능</small>
                     <%
-                        }else{
+                    } else {
                     %>
                     <small style="color:red;">대여불가</small>
                     <%

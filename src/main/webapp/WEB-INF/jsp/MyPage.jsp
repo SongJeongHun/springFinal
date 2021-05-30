@@ -3,7 +3,10 @@
 <%@ page import="com.example.test.User.userDAO" %>
 <%@ page import="com.example.test.Book.BookDAO" %>
 <%@ page import="com.example.test.Book.LendDTO" %>
-<%@ page import="java.util.ArrayList" %><%--
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="java.util.Date" %><%--
   Created by IntelliJ IDEA.
   User: songjeonghun
   Date: 2021/05/29
@@ -72,20 +75,33 @@
             <h5>대여 목록</h5>
         </div>
         <%
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
             BookDAO bookDAO = new BookDAO();
             ArrayList<LendDTO> lendList = bookDAO.getLendList(userID);
+            Date today = Calendar.getInstance().getTime();
         %>
         <div class="card-body">
             <%
                 if (lendList != null) {
                     for (int i = 0; i < lendList.size(); i++) {
             %>
-            <a href = "ReturnAction?bookID=<%=lendList.get(i).getBookID()%>" class="form-control mt-2 text-left">
+            <a onclick="return confirm('반납하시겠습니까 ?')" href = "ReturnAction?bookID=<%=lendList.get(i).getBookID()%>" class="form-control mt-2 text-left">
                 <small>(<%=lendList.get(i).getBookID()%>)&nbsp;</small>
                 <b><%=lendList.get(i).getBookTitle()%>&nbsp;</b>
                 <small>&nbsp;대여일 : <%=lendList.get(i).getLendDate()%> </small>
                 <b style>&nbsp;반납일 : <%=lendList.get(i).getReturnDate()%> </b>
 
+                <%
+                    if(today.after(sdf.parse(lendList.get(i).getReturnDate()))){
+                %>
+                <small style="color:red;">&nbsp;&nbsp;상태 : 연체</small>
+                <%
+                } else {
+                %>
+                <small style="color:green;">&nbsp;&nbsp;상태 : 정상</small>
+                <%
+                    }
+                %>
             </a>
             <%
                     }

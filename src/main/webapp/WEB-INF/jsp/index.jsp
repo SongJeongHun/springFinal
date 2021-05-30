@@ -3,29 +3,30 @@
 <%@ page import="com.example.test.Book.BookDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.example.test.Book.BookDTO" %>
+<%@ page import="java.io.PrintWriter" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="utf-8" %>
 <%
     InetAddress Address = InetAddress.getLocalHost();
     String ip = Address.getHostAddress();
     request.setCharacterEncoding("UTF-8");
-    String lectureDivide = "";
     String searchType = "";
+    int pages = 1;
     String search = "";
-
-    if (request.getParameter("lectureDivide") != null)
-        lectureDivide = request.getParameter("lectureDivide");
-    else
-        lectureDivide = "전체";
-
     if (request.getParameter("searchType") != null)
         searchType = request.getParameter("searchType");
     else
-        searchType = "new";
-
+        searchType = "";
     if (request.getParameter("search") != null)
         search = request.getParameter("search");
     else
         search = "";
+    if (request.getParameter("pages") != null) {
+        pages = Integer.parseInt(request.getParameter("pages"));
+        if(pages < 1)
+            pages = 1;
+    }
+    else
+        pages = 1;
 
     String userID = null;
     if (session.getAttribute("userID") != null) {
@@ -92,7 +93,15 @@
         </form>
         <%
             BookDAO bookDAO = new BookDAO();
-            ArrayList<BookDTO> booksList = bookDAO.getBooks();
+            ArrayList<BookDTO> booksList = bookDAO.getBooks(searchType,search,pages);
+            if(booksList.size() < 1){
+                PrintWriter script = response.getWriter();
+                script.println("<script>");
+                script.println("alert('pages end.');");
+                script.println("history.back();");
+                script.println("</script>");
+                script.close();
+            }
         %>
         <div class="card bg-light mt-3">
             <div class="card-header">
@@ -104,7 +113,7 @@
                     if (booksList != null) {
                         for (int i = 0; i < booksList.size(); i++) {
                 %>
-                <a href = "LendingAction?bookID=<%=booksList.get(i).getID()%>" class="form-control mt-2 text-left">
+                <a onclick="return confirm('대여하시겠습니까 ?')" href = "LendingAction?bookID=<%=booksList.get(i).getID()%>" class="form-control mt-2 text-left">
                     <small>(<%=booksList.get(i).getID()%>)&nbsp;</small>
                     <b style>&nbsp; <%=booksList.get(i).getTitle()%> </b>
                     <small>&nbsp; <%=booksList.get(i).getAuthor()%> </small>
@@ -128,6 +137,8 @@
                 %>
             </div>
         </div>
+        <a href="/?pages=<%=pages - 1%>&searchType=<%=searchType%>&search=<%=search%>" type="button" class="btn btn-primary"><</a>
+        <a href="/?pages=<%=pages + 1%>&searchType=<%=searchType%>&search=<%=search%>" type="button" class="btn btn-primary">></a>
     </section>
 </div>
 <%--jQuery 자바스크립트 추가--%>

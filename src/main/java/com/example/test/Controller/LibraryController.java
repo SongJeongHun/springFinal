@@ -64,20 +64,30 @@ public class LibraryController {
     public ModelAndView ReturnAction(ModelAndView mav, HttpServletResponse response,HttpServletRequest request,
         @RequestParam(value = "bookID",required = false)int bookid) throws IOException {
         mav.setViewName("ReturnAction");
-        String userID = null;
-        HttpSession session = request.getSession();
-        userID = (String)session.getAttribute("userID");
-        PrintWriter script = response.getWriter();
-        script.println("<script>");
-        script.println("var result = confirm('return ?');");
-        script.println("if(result){");
         int result = bookDAO.returning(bookid);
-        script.println("location.href='/MyPage'");
-        script.println("}else{");
-        script.println("history.back();");
-        script.println("}");
-        script.println("</script>");
-        script.close();
+        if (result == 1) {
+            PrintWriter script = response.getWriter();
+            script.println("<script>");
+            script.println("alert('returning success.');");
+            script.println("location.href='/MyPage'");
+            script.println("</script>");
+            script.close();
+        } else if (result == -1) {
+            PrintWriter script = response.getWriter();
+            script.println("<script>");
+            script.println("alert('DB error.');");
+            script.println("location.href='/'");
+            script.println("</script>");
+            script.close();
+        } else if (result == 0) {
+            PrintWriter script = response.getWriter();
+            script.println("<script>");
+            script.println("alert('Already retunred.');");
+            script.println("location.href='/'");
+            script.println("</script>");
+            script.close();
+            script.close();
+        }
         return mav;
     }
 }

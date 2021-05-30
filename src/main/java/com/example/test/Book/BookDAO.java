@@ -9,15 +9,21 @@ import java.util.Calendar;
 public class BookDAO {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
     public BookDAO(){}
-    public ArrayList<BookDTO> getBooks(){
+    public ArrayList<BookDTO> getBooks(String searchType,String search,int page){
         ArrayList<BookDTO> books = new ArrayList<>();
-        String SQL="SELECT * FROM books LIMIT 15";
+        String SQL="SELECT * FROM books WHERE CONCAT(title,author,publisher) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+        if (searchType.equals("title")) {
+            SQL = "SELECT * FROM books WHERE CONCAT(title) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+        } else if (searchType.equals("author")) {
+            SQL = "SELECT * FROM books WHERE CONCAT(author) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+        }
         Connection conn=null;
         PreparedStatement pstmt=null;
         ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
         try{
             conn= getConnection(); //객체자체를 반환
             pstmt=conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            pstmt.setString(1, "%" + search + "%");
             rs = pstmt.executeQuery();
             if(rs != null){
                 while(rs.next()){
@@ -93,6 +99,7 @@ public class BookDAO {
         }
         return -1;
     }
+
     public boolean usableCheck(int bookid){
         boolean result = false;
         String SQL="SELECT usable FROM books WHERE ID="+bookid;

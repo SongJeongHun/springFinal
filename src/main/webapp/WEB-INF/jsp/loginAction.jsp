@@ -14,6 +14,4 @@
         userPassword="";
     else
         userPassword=request.getParameter("userPassword");
-
-
 %>

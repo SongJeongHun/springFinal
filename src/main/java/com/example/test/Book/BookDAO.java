@@ -1,10 +1,7 @@
 package com.example.test.Book;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,6 +41,27 @@ public class BookDAO {
             try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
         }
         return null;
+    }
+    public int returning(int bookID){
+        String SQL1="UPDATE books SET usable=1 WHERE id=" + bookID;
+        String SQL2="DELETE FROM lendtable WHERE id=" + bookID;
+        Connection conn=null;
+        PreparedStatement pstmt1=null;
+        PreparedStatement pstmt2=null;
+        try{
+            conn= getConnection(); //객체자체를 반환
+            pstmt1=conn.prepareStatement(SQL1);   //컨객체의 SQL문장 준비
+            pstmt1.executeUpdate();
+            pstmt2 = conn.prepareStatement(SQL2);
+            return pstmt2.executeUpdate();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try{if(pstmt1!=null) pstmt1.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(pstmt2!=null) pstmt2.close();} catch (Exception e ){e.printStackTrace();}
+        }
+        return -1;
     }
     public int lending(int bookID,String userID){
         Calendar time = Calendar.getInstance();
@@ -138,5 +156,36 @@ public class BookDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    public ArrayList<LendDTO> getLendList(String userID){
+        ArrayList<LendDTO> lendTable = new ArrayList<>();
+        String SQL="SELECT * FROM lendtable WHERE userID=?";
+        Connection conn=null;
+        PreparedStatement pstmt=null;
+        ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
+        try{
+            conn= getConnection(); //객체자체를 반환
+            pstmt=conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            pstmt.setString(1,userID);
+            rs = pstmt.executeQuery();
+            if(rs != null){
+                while(rs.next()){
+                    int bookID = rs.getInt("ID");
+                    String userid = rs.getString("userID");
+                    String lendDate = rs.getString("lendDate");
+                    String returnDate = rs.getString("returnDate");
+                    String bookTItle = rs.getString("title");
+                    lendTable.add(new LendDTO(bookID,userid,lendDate,returnDate,bookTItle));
+                }
+            }
+            return lendTable;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try{if(pstmt!=null) pstmt.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
+        }
+        return lendTable;
     }
 }

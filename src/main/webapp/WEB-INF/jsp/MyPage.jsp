@@ -1,6 +1,9 @@
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="com.example.test.User.userDTO" %>
-<%@ page import="com.example.test.User.userDAO" %><%--
+<%@ page import="com.example.test.User.userDAO" %>
+<%@ page import="com.example.test.Book.BookDAO" %>
+<%@ page import="com.example.test.Book.LendDTO" %>
+<%@ page import="java.util.ArrayList" %><%--
   Created by IntelliJ IDEA.
   User: songjeonghun
   Date: 2021/05/29
@@ -58,7 +61,7 @@
                 <small><%=myInfo.getUserAdd()%></small>
             </a>
         </div>
-        <button type="submit" class="btn btn-primary row-2 mt-2">정보수정</button>
+        <button type="submit" class="btn btn-primary ">정보수정</button>
     </div>
 
 </section>
@@ -68,7 +71,26 @@
         <div class="card-header">
             <h5>대여 목록</h5>
         </div>
+        <%
+            BookDAO bookDAO = new BookDAO();
+            ArrayList<LendDTO> lendList = bookDAO.getLendList(userID);
+        %>
         <div class="card-body">
+            <%
+                if (lendList != null) {
+                    for (int i = 0; i < lendList.size(); i++) {
+            %>
+            <a href = "ReturnAction?bookID=<%=lendList.get(i).getBookID()%>" class="form-control mt-2 text-left">
+                <small>(<%=lendList.get(i).getBookID()%>)&nbsp;</small>
+                <b><%=lendList.get(i).getBookTitle()%>&nbsp;</b>
+                <small>&nbsp;대여일 : <%=lendList.get(i).getLendDate()%> </small>
+                <b style>&nbsp;반납일 : <%=lendList.get(i).getReturnDate()%> </b>
+
+            </a>
+            <%
+                    }
+                }
+            %>
         </div>
     </div>
 </section>

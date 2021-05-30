@@ -60,4 +60,24 @@ public class LibraryController {
         }
         return mav;
     }
+    @RequestMapping("/ReturnAction")
+    public ModelAndView ReturnAction(ModelAndView mav, HttpServletResponse response,HttpServletRequest request,
+        @RequestParam(value = "bookID",required = false)int bookid) throws IOException {
+        mav.setViewName("ReturnAction");
+        String userID = null;
+        HttpSession session = request.getSession();
+        userID = (String)session.getAttribute("userID");
+        PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("var result = confirm('return ?');");
+        script.println("if(result){");
+        int result = bookDAO.returning(bookid);
+        script.println("location.href='/MyPage'");
+        script.println("}else{");
+        script.println("history.back();");
+        script.println("}");
+        script.println("</script>");
+        script.close();
+        return mav;
+    }
 }

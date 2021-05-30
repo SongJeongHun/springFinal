@@ -30,7 +30,6 @@ public class userDAO {
             try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
             try{if(pstmt!=null) pstmt.close();} catch (Exception e ){e.printStackTrace();}
             try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
-
         }
         return -2; //데이터베이스 오류
     }

@@ -64,7 +64,7 @@
                 <small><%=myInfo.getUserAdd()%></small>
             </a>
         </div>
-        <button type="submit" class="btn btn-primary ">정보수정</button>
+        <a class="btn btn-primary" data-toggle="modal" href="#modifyModal">정보수정</a>
     </div>
 
 </section>
@@ -110,6 +110,38 @@
         </div>
     </div>
 </section>
+</div>
+<div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal">정보 수정</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="ModifyAction" method="post">
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" name="userName" class="form-control" maxlength="40">
+                    </div>
+                    <div class="form-group">
+                        <label>휴대폰 번호</label>
+                        <input type="text" name="userPhoneNum" class="form-control" maxlength="40">
+                    </div>
+                    <div class="form-group">
+                        <label>주소</label>
+                        <input type="text" name="userAdd" class="form-control" maxlength="40">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-primary">수정완료</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <%--jQuery 자바스크립트 추가--%>
 <script src="./js/jquery-3.4.1.min.js"></script>

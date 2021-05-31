@@ -11,11 +11,11 @@ public class BookDAO {
     public BookDAO(){}
     public ArrayList<BookDTO> getBooks(String searchType,String search,int page){
         ArrayList<BookDTO> books = new ArrayList<>();
-        String SQL="SELECT * FROM books WHERE CONCAT(title,author,publisher) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+        String SQL="SELECT * FROM books WHERE CONCAT(title,author,publisher) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 13 +"," + 13;
         if (searchType.equals("title")) {
-            SQL = "SELECT * FROM books WHERE CONCAT(title) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+            SQL = "SELECT * FROM books WHERE CONCAT(title) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 13 +"," + 13;
         } else if (searchType.equals("author")) {
-            SQL = "SELECT * FROM books WHERE CONCAT(author) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 15 +"," + 15;
+            SQL = "SELECT * FROM books WHERE CONCAT(author) LIKE ? ORDER BY ID ASC LIMIT " + (page - 1) * 13 +"," + 13;
         }
         Connection conn=null;
         PreparedStatement pstmt=null;
@@ -73,7 +73,7 @@ public class BookDAO {
         Calendar time = Calendar.getInstance();
         if(!usableCheck(bookID))
             return 0;
-        String SQL1="UPDATE books SET usable=0 WHERE id=" + bookID;
+        String SQL1="UPDATE books SET usable=0, lendCount = lendCount + 1 WHERE id=" + bookID;
         String SQL2="INSERT INTO lendtable VALUES (?,?,?,?,?)";
         Connection conn=null;
         PreparedStatement pstmt1=null;
@@ -98,6 +98,44 @@ public class BookDAO {
             try{if(pstmt2!=null) pstmt2.close();} catch (Exception e ){e.printStackTrace();}
         }
         return -1;
+    }
+    public ArrayList<String> rank() {
+        ArrayList<String> result = new ArrayList<>();
+        String SQL = "SELECT title FROM books ORDER BY lendCount DESC LIMIT 5";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;//SQL에서 나온 값을 처리하기위한 클래스
+        try {
+            conn = getConnection(); //객체자체를 반환
+            pstmt = conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            rs = pstmt.executeQuery();
+            if (rs != null) {
+                while (rs.next()) {
+                    String title = rs.getString("title");
+                    result.add(title);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try {
+                if (pstmt != null) pstmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     public boolean usableCheck(int bookid){

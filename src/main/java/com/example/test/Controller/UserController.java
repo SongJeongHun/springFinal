@@ -105,4 +105,40 @@ public class UserController {
         mav.setViewName("userLogout");
         return mav;
     }
+    @RequestMapping("/ModifyAction")
+    public ModelAndView modifyAction(ModelAndView mav, HttpServletResponse response,HttpServletRequest request,
+        @RequestParam(value = "userName",required = false)String name,
+        @RequestParam(value = "userPhoneNum",required = false)String phoneNum,
+        @RequestParam(value = "userAdd",required = false)String address) throws IOException {
+        mav.setViewName("ModifyAction");
+        String userID = "";
+        HttpSession session = request.getSession();
+        userID = (String)session.getAttribute("userID");
+        if(userID.equals("") || name.equals("") || phoneNum.equals("") || address.equals("")) {
+            PrintWriter script = response.getWriter();
+            script.println("<script>");
+            script.println("alert('There are some items that have not been entered. 테스트');");
+            script.println("history.back();");
+            script.println("</script>");
+            script.close();
+        }else{
+            int result = userDAO.modify(userID,name,phoneNum,address);
+            if(result == 1){
+                PrintWriter script=response.getWriter();
+                script.println("<script>");
+                script.println("alert('Modify Success !!')");
+                script.println("location.href='/MyPage'");
+                script.println("</script>");
+                script.close();
+            }else {
+                PrintWriter script = response.getWriter();
+                script.println("<script>");
+                script.println("alert('update fail.');");
+                script.println("history.back();");
+                script.println("</script>");
+                script.close();
+            }
+        }
+        return mav;
+    }
 }

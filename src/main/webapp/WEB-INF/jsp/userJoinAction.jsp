@@ -12,7 +12,7 @@ request.setCharacterEncoding("UTF-8");
         PrintWriter script=response.getWriter();
         script.println("<script>");
         script.println("alert('로그인이 된 상태입니다.');");
-        script.println("location.href='index.jsp'");
+        script.println("location.href='/'");
         script.println("</script>");
         script.close();
     }

@@ -87,6 +87,28 @@ public class userDAO {
         }
         return -1; //회원 가입 실패
     }
+    public int modify(String userID,String userName,String userPhoneNum,String userAdd){
+        String SQL="UPDATE user SET userName=?, userPhoneNum=?, userAdd=? WHERE userID=?";
+        Connection conn=null;
+        PreparedStatement pstmt=null;
+        ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
+        try{
+            conn= getConnection(); //객체자체를 반환
+            pstmt=conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            pstmt.setString(1,userName);  //입력받은 ID값을 ?안에 넣어줌 1번째 물음표
+            pstmt.setString(2,userPhoneNum);
+            pstmt.setString(3,userAdd);
+            pstmt.setString(4,userID);
+            return pstmt.executeUpdate();   //데이터 계수를 반환.성공시 1반환
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try{if(pstmt!=null) pstmt.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
+        }
+        return -1; //회원 가입 실패
+    }
     public Connection getConnection(){
         try{
             String dbURL="jdbc:mysql://localhost:3306/BookManagementSystem?serverTimezone=UTC";

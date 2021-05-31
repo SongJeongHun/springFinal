@@ -22,10 +22,9 @@
         search = "";
     if (request.getParameter("pages") != null) {
         pages = Integer.parseInt(request.getParameter("pages"));
-        if(pages < 1)
+        if (pages < 1)
             pages = 1;
-    }
-    else
+    } else
         pages = 1;
 
     String userID = null;
@@ -80,21 +79,39 @@
         <%
             }
         %>
+        <div class="card bg-light mt-3">
+            <div class="card-header">
+                <h5>실시간 대여 랭킹</h5>
+            </div>
+            <div class="card-body">
+
+                <%
+                    ArrayList<String> rank = new ArrayList<>();
+                    BookDAO bookDAO = new BookDAO();
+                    rank = bookDAO.rank();
+                    for (int i = 0; i < rank.size(); i++) {
+                %>
+                <p><small><%=i + 1%>위 : <b><%=rank.get(i)%>
+                </b></small></p>
+                <%
+                    }
+                %>
+            </div>
+        </div>
     </section>
     <%--컨테이너 2--%>
     <section class="container col-10 pr-5">
         <form method="get" action="/" class="form-inline mt-3">
             <select name="searchType" class="form-control mx-1 mt-2">
-                <option value="title" <%if (searchType.equals("title")) out.println("selected");%>>title</option>
-                <option value="author" <%if (searchType.equals("author")) out.println("selected");%>>author</option>
+                <option value="title" <%if (searchType.equals("title")) out.println("selected");%>>제목</option>
+                <option value="author" <%if (searchType.equals("author")) out.println("selected");%>>저자</option>
             </select>
             <input type="text" name="search" class="form-control mx-1 mt-2" placeholder="내용을 입력하세요.">
             <button type="submit" class="btn btn-primary mx-1 mt-2">검색</button>
         </form>
         <%
-            BookDAO bookDAO = new BookDAO();
-            ArrayList<BookDTO> booksList = bookDAO.getBooks(searchType,search,pages);
-            if(booksList.size() < 1){
+            ArrayList<BookDTO> booksList = bookDAO.getBooks(searchType, search, pages);
+            if (booksList.size() < 1) {
                 PrintWriter script = response.getWriter();
                 script.println("<script>");
                 script.println("alert('pages end.');");
@@ -112,33 +129,57 @@
                 <%
                     if (booksList != null) {
                         for (int i = 0; i < booksList.size(); i++) {
+                            if (booksList.get(i).getUsable()) {
                 %>
-                <a onclick="return confirm('대여하시겠습니까 ?')" href = "LendingAction?bookID=<%=booksList.get(i).getID()%>" class="form-control mt-2 text-left">
-                    <small>(<%=booksList.get(i).getID()%>)&nbsp;</small>
-                    <b style>&nbsp; <%=booksList.get(i).getTitle()%> </b>
-                    <small>&nbsp; <%=booksList.get(i).getAuthor()%> </small>
-                    <small>&nbsp;&nbsp;출판사: <%=booksList.get(i).getPublisher()%> </small>
-                    <small>&nbsp;&nbsp;출판일: <%=booksList.get(i).getPubDate()%> </small>
-                    <%
-                        if (booksList.get(i).getUsable()) {
+                <a onclick="return confirm('대여하시겠습니까 ?')" href="LendingAction?bookID=<%=booksList.get(i).getID()%>"
+                   class="form-control mt-2 text-left">
+                        <%
+                        }else{
                     %>
-                    <small style="color:blue;">대여가능</small>
-                    <%
-                    } else {
-                    %>
-                    <small style="color:red;">대여불가</small>
-                    <%
-                        }
-                    %>
-                </a>
-                <%
+                    <a onclick="return confirm('예약하시겠습니까 ?')" href="ReserveAction?bookID=<%=booksList.get(i).getID()%>"
+                       class="form-control mt-2 text-left">
+                        <%
+                            }
+                        %>
+                        <small>(<%=booksList.get(i).getID()%>)&nbsp;</small>
+                        <b style>&nbsp; <%=booksList.get(i).getTitle()%>
+                        </b>
+                        <small>&nbsp; <%=booksList.get(i).getAuthor()%>
+                        </small>
+                        <small>&nbsp;&nbsp;출판사: <%=booksList.get(i).getPublisher()%>
+                        </small>
+                        <small>&nbsp;&nbsp;출판일: <%=booksList.get(i).getPubDate()%>
+                        </small>
+                        <%
+                            if (booksList.get(i).getUsable()) {
+                        %>
+                        <small style="color:blue;">대여가능</small>
+                        <%
+                        } else {
+                        %>
+                        <small style="color:red;">대여불가</small>
+                        <%
+                            }
+                        %>
+                    </a>
+                        <%
                         }
                     }
                 %>
             </div>
         </div>
-        <a href="/?pages=<%=pages - 1%>&searchType=<%=searchType%>&search=<%=search%>" type="button" class="btn btn-primary"><</a>
-        <a href="/?pages=<%=pages + 1%>&searchType=<%=searchType%>&search=<%=search%>" type="button" class="btn btn-primary">></a>
+        <div class="row text-center" style="width: 100%">
+            <div style="width: 10%; float:none; margin:0 auto">
+                <div class="row">
+                    <button onclick="location.href = '/?pages=<%=pages - 1%>&searchType=<%=searchType%>&search=<%=search%>'"
+                            class="btn btn-primary mt-3 mx-2"><
+                    </button>
+                    <button onclick="location.href = '/?pages=<%=pages + 1%>&searchType=<%=searchType%>&search=<%=search%>'"
+                            class="btn btn-primary mt-3 mx-2">>
+                    </button>
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 <%--jQuery 자바스크립트 추가--%>

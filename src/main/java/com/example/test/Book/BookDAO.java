@@ -51,21 +51,56 @@ public class BookDAO {
     public int returning(int bookID){
         String SQL1="UPDATE books SET usable=1 WHERE id=" + bookID;
         String SQL2="DELETE FROM lendtable WHERE id=" + bookID;
+        String SQL3="SELECT * FROM reservetable WHERE id=" + bookID;
+        String SQL4="DELETE FROM reservetable WHERE id=" + bookID;
         Connection conn=null;
         PreparedStatement pstmt1=null;
         PreparedStatement pstmt2=null;
+        PreparedStatement pstmt3=null;
+        PreparedStatement pstmt4=null;
+        ResultSet rs = null;
         try{
             conn= getConnection(); //객체자체를 반환
             pstmt1=conn.prepareStatement(SQL1);   //컨객체의 SQL문장 준비
             pstmt1.executeUpdate();
             pstmt2 = conn.prepareStatement(SQL2);
-            return pstmt2.executeUpdate();
+            pstmt2.executeUpdate();
+            pstmt3 = conn.prepareStatement(SQL3);
+            pstmt4 = conn.prepareStatement(SQL4);
+            rs = pstmt3.executeQuery();
+            if (rs.next()) {
+                String userID = rs.getString("userID");
+                lending(bookID,userID);
+                pstmt4.executeUpdate();
+            }
+            return 1;
         }catch (Exception e) {
             e.printStackTrace();
         }finally {
             try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
             try{if(pstmt1!=null) pstmt1.close();} catch (Exception e ){e.printStackTrace();}
             try{if(pstmt2!=null) pstmt2.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(pstmt3!=null) pstmt3.close();} catch (Exception e ){e.printStackTrace();}
+        }
+        return -1;
+    }
+    public int reserving(int bookID,String userID){
+        String SQL="INSERT INTO reservetable VALUES (?,?,?)";
+        Connection conn=null;
+        PreparedStatement pstmt=null;
+        try{
+            conn= getConnection(); //객체자체를 반환
+            pstmt=conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            pstmt.setInt(1,bookID);
+            pstmt.setString(2,userID);
+            pstmt.setString(3,getTitle(bookID));
+            return pstmt.executeUpdate();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try{if(pstmt!=null) pstmt.close();} catch (Exception e ){e.printStackTrace();}
         }
         return -1;
     }
@@ -137,7 +172,6 @@ public class BookDAO {
         }
         return result;
     }
-
     public boolean usableCheck(int bookid){
         boolean result = false;
         String SQL="SELECT usable FROM books WHERE ID="+bookid;
@@ -232,5 +266,34 @@ public class BookDAO {
             try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
         }
         return lendTable;
+    }
+    public ArrayList<ReserveDTO> getReserveList(String userID){
+        ArrayList<ReserveDTO> reserveList = new ArrayList<>();
+        String SQL="SELECT * FROM reservetable WHERE userID=?";
+        Connection conn=null;
+        PreparedStatement pstmt=null;
+        ResultSet rs=null;//SQL에서 나온 값을 처리하기위한 클래스
+        try{
+            conn= getConnection(); //객체자체를 반환
+            pstmt=conn.prepareStatement(SQL);   //컨객체의 SQL문장 준비
+            pstmt.setString(1,userID);
+            rs = pstmt.executeQuery();
+            if(rs != null){
+                while(rs.next()){
+                    int bookID = rs.getInt("ID");
+                    String userid = rs.getString("userID");
+                    String title = rs.getString("title");
+                    reserveList.add(new ReserveDTO(bookID,userid,title));
+                }
+            }
+            return reserveList;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{if(conn!=null) conn.close();} catch (Exception e ){e.printStackTrace();}    //conn과 밑에 3개는 한번사용후에 닫아주는 것이 필요
+            try{if(pstmt!=null) pstmt.close();} catch (Exception e ){e.printStackTrace();}
+            try{if(rs!=null) rs.close();} catch (Exception e ){e.printStackTrace();}
+        }
+        return reserveList;
     }
 }

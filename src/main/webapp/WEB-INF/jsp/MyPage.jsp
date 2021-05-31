@@ -6,7 +6,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Calendar" %>
-<%@ page import="java.util.Date" %><%--
+<%@ page import="java.util.Date" %>
+<%@ page import="com.example.test.Book.ReserveDTO" %><%--
   Created by IntelliJ IDEA.
   User: songjeonghun
   Date: 2021/05/29
@@ -102,6 +103,29 @@
                 <%
                     }
                 %>
+            </a>
+            <%
+                    }
+                }
+            %>
+        </div>
+    </div>
+    <div class="card bg-light mt-5">
+        <div class="card-header">
+            <h5>예약 목록</h5>
+        </div>
+        <%
+
+            ArrayList<ReserveDTO> reserveList = bookDAO.getReserveList(userID);
+        %>
+        <div class="card-body">
+            <%
+                if (lendList != null) {
+                    for (int i = 0; i < reserveList.size(); i++) {
+            %>
+            <a  class="form-control mt-2 text-left">
+                <small>(<%=reserveList.get(i).getId()%>)&nbsp;</small>
+                <b><%=reserveList.get(i).getTitle()%>&nbsp;</b>
             </a>
             <%
                     }
